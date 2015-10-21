@@ -1,0 +1,475 @@
+  <!DOCTYPE html>
+  <head>
+  <meta charset="utf-8"/>
+  <title>Campus Wifi Map</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="parse-1.3.2.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="index.js"></script>
+    
+  <style type="text/css">
+    
+    
+  
+  #main{
+  background-color: #FFF;
+  margin: 0;
+  padding: 10px;
+  }
+  
+  #campusMap{
+  position: relative;
+  width:80%;
+  padding-bottom: 20%;
+  vertical-align: middle;
+  margin: 0;
+  }
+  
+  .bar {
+    fill: steelblue;
+  }
+  
+  .bar:hover {
+    fill: brown;
+  }
+  
+  .axis {
+    font: 10px sans-serif;
+  }
+  
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+  #googleMap{
+    position:relative;
+     top:43px;
+     left: 700px;
+    
+  }
+  
+  
+  
+  </style>
+  
+  </head>
+  
+  <body>
+    <!--Show Campus Map Button hidden initially-->
+    <button id="showMap">Show Campus Map</button>
+      <div>
+          <!--Drop down for filtering data-->
+          <select class= "select_data_list" id = "select_data_list">
+          <option value="Upload">Upload</option>
+          <option value="Download">Download</option>
+          <option value="PacketLossPercent">Packet Loss Percent</option>
+          <option value="pingAvg">Ping Test Average</option>
+          <option value="pingStddev">Ping Test Standard Deviation</option>
+          </select>
+          <button id = "get_data" class = "select_data_list">Retrieve Data</button>
+      </div>
+      
+      <div>
+          <!--Specific drop down for Urbaeur(only location w/ multiple rooms)-->
+          <select class= "urbauer_room_list" id = "urbauer_room_list">
+          <option value="Urbauer 222">Urbauer 222</option>
+          <option value="Urbauer 218">Urbauer 218</option>
+           <option value="Urbauer 216">Urbauer 216</option>
+          <option value="Urbauer 215">Urbauer 215</option>
+          </select>
+      </div>
+        <label class="input"><input type="checkbox" class="input"> Sort values</label>
+  
+      
+   <div id="googleMap"></div>
+   <!--Brief description of available Washu wifi networks-->
+   <div id="NetworksInfo" style="position:relative; top:200px;">
+    <h3>Danforth Campus Wireless Networks</h3>
+    <hr>
+    <p>There are a number of wireless networks that are broadcasted across the University. For all faculty, staff, and students on the Danforth Campus and South Forty, the wustl1.0/2.0 wireless networks are recommended. For more sensitive data, the wustl-encrypted1.0/2.0 wireless networks are recommended.</p>
+    <ul>
+      <li>Wustl 1.0/2.0 SSID's STRONGLY RECOMMENDED for wireless connectivity</li>
+      <li>For security-sensitive data, use encrypted SSID's(either 1.0/2.0)</li>
+      <li>2.0 indicates newer features such as faster speeds, better coverage, greater device support, and higher reliability</li>
+    </ul>
+   
+   <b>Wustl-1.0+2.0 : Recommended for EASE OF USE</b>
+   <br>
+    This wireless access requires only a web browser and  WUSTL Key. Once a device is authenticated into the wustl wireless network it will not need to be authenticated again unless the device has not been on the wustl wireless network for more than six months. Communication between the client device and the wireless network is not encrypted.
+      <br>
+      Caution should be taken to make sure that sensitive data is only sent to secured websites (e.g., SSL encrypted or designated with "HTTPS:").
+    <br>
+      <br>
+    <b>Wustl-encrypted 1.0+2.0 : Recommended for SECURITY</b>
+    
+    <br>
+    Wireless access that utilizes WUSTL Key authentication and encryption to ensure a secure connection to the wireless access point. This network may require additional configuration.
+    <br>
+    <br>
+    <b>Wustl-guest</b>
+    <br>
+    Wireless access that doesn't require a login.  This network limits bandwidth and access to select Internet resources. Communication between the client device and the wireless network is not encrypted.
+      <br>
+        <br>
+      Caution should be taken to make sure that sensitive data is only sent to secured websites (e.g., SSL encrypted or designated with "HTTPS:").
+    
+  </div>
+   
+    <figure id= "campusMap">
+  <svg
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:cc="http://creativecommons.org/ns#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:svg="http://www.w3.org/2000/svg"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+     xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+     width="1920px"
+     height="1080px"
+     id="svg2985"
+     version="1.1"
+     inkscape:version="0.48.5 r10040"
+     sodipodi:docname="mapTest.svg">
+    <defs
+       id="defs2987" />
+    <sodipodi:namedview
+       id="base"
+       pagecolor="#ffffff"
+       bordercolor="#666666"
+       borderopacity="1.0"
+       inkscape:pageopacity="0.0"
+       inkscape:pageshadow="2"
+       inkscape:zoom="1.28"
+       inkscape:cx="1131.082"
+       inkscape:cy="179.46845"
+       inkscape:document-units="px"
+       inkscape:current-layer="layer2"
+       showgrid="false"
+       inkscape:window-width="1280"
+       inkscape:window-height="752"
+       inkscape:window-x="0"
+       inkscape:window-y="0"
+       inkscape:window-maximized="1" />
+    <metadata
+       id="metadata2990">
+      <rdf:RDF>
+        <cc:Work
+           rdf:about="">
+          <dc:format>image/svg+xml</dc:format>
+          <dc:type
+             rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+          <dc:title></dc:title>
+        </cc:Work>
+      </rdf:RDF>
+    </metadata>
+    <g
+       inkscape:groupmode="layer"
+       id="layer4"
+       inkscape:label="background_layer"
+       style="opacity:0.60162162"
+       sodipodi:insensitive="true">
+      <image
+         y="-1.5014756"
+         x="-0.24164669"
+         id="image4685"
+         xlink:href="background.jpg"
+         height="1080"
+         width="1920" />
+    </g>
+    <g 
+       inkscape:groupmode="layer"
+       id="layer2"
+       inkscape:label="svgLayer"
+       style="display:inline">
+      
+      <a xlink:href="#"class = "room">
+      <path
+         id="SimonHall"
+         style="fill:#00FF00;fill-opacity:.95;stroke:#000000;stroke-width:0.97730732px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:.9"
+         d="m 97.954952,671.33 7.989548,0.3556 0,-3.91165 166.39097,1.06682 0,36.62745 -7.98955,-0.35562 0,4.97851 80.24283,0.35561 0.34736,12.80183 7.98955,0.3556 0.34738,32.7158 -8.33693,0 0.34737,13.51303 -16.67382,-0.3556 0,6.40092 7.64217,0.35561 0.69473,35.91624 -192.09647,0 0,-2.13363 -39.25296,0.3556 0.34737,-3.55607 -8.336925,-0.35561 -0.347366,-25.60366 3.473711,0.3556 0,-8.89015 -2.778968,0 -0.347377,-17.42471 2.778975,-0.35562 0,-53.34095 -2.431598,0 c 0,0 0,-0.71122 0,-29.87095 z"
+         id="path3629"
+         inkscape:connector-curvature="0" 
+         onmouseover="this.style.fill = '#339933';"
+         onmouseout="this.style.fill= '#00FF00';"
+         />
+      </a>
+  
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.96710879px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 152.50573,715.13708 45.39987,0.35436 0.34135,49.61093 -46.08258,0 -3.07217,-2.83493 c 0.34136,-43.94109 0.34136,-43.94109 0.34136,-43.94109 z"
+         id="path3633"
+         inkscape:connector-curvature="0" 
+         />
+      
+  
+      <a xlink:href="#" class = "room">
+      <path id="DUC"
+         style="fill:#00FF00;fill-opacity:.95;stroke:#000000;stroke-width:0.89824158px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:.9"
+         d="m 383.48634,678.84869 34.90243,-0.2807 -0.01,-2.7565 48.51999,-0.17856 0.55243,3.50425 45.70865,0.27621 0.82864,24.2534 -7.75823,0.45926 c 0,9.03845 0.37029,8.76223 0.37029,8.76223 l -40.8127,-0.73878 0.0203,45.31348 3.19196,0.19531 0.63333,8.33364 -4.33033,0.89121 0.76094,10.27607 45.65888,-0.49513 0,-3.87363 17.59075,0.0597 -0.0606,11.44187 6.33724,-0.0678 0.58594,10.53313 6.46521,0.39063 0.51857,25.71296 14.7488,0.39063 -0.13474,24.54926 -17.32808,0.19532 -0.12794,2.58241 -17.73228,-0.45029 -0.0606,-1.93681 -17.07897,-0.45846 0.51857,64.88061 36.54193,0.0597 0.33005,24.48958 -5.23952,-0.0678 0.32326,4.84202 -23.73948,0.20348 -0.19532,-12.34246 -66.88135,-0.39062 -0.13473,8.40101 -16.35832,-0.45031 -0.0674,-24.81237 5.81868,-5.24082 0.45121,-14.33077 18.56733,0.0597 -0.45121,-44.91026 -20.95809,-0.19531 0,10.7366 -11.83944,-0.42045 -0.22562,-2.17012 -5.33717,0.1275 -0.0977,2.7479 -22.70234,-0.48828 -0.15824,-10.46531 -5.30689,0.19531 -0.29297,-24.06099 5.23274,0.1275 0.10444,-48.65637 -5.26982,0.0678 0,-18.70898 5.45835,-0.16548 0.0673,-50.84817 -10.25022,0 z"
+         id="path3654"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        onmouseover="this.style.fill = '#339933';"
+         onmouseout="this.style.fill= '#00FF00';"
+         />
+      </a>
+  
+      <a xlink:href="#" class = "room">
+      <path id="Wilson"
+         style="fill:#E60000;fill-opacity:.95;stroke:#000000;stroke-width:0.96061891px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:.9"
+         d="m 1155.4803,759.08553 151.5986,0 0,5.78151 6.4404,0 0,-3.37255 16.8443,0.4818 0,23.12604 -15.8535,0 0.4955,-2.89075 -7.9267,0.48179 0.9908,15.89915 -39.6336,0 0,1.44539 -73.8176,0.48178 0,-2.40895 -39.1382,0.48178 z"
+         id="path3656"
+         inkscape:connector-curvature="0"
+          onmouseover="this.style.fill= '#ae2b2b';"
+         onmouseout="this.style.fill= '#E60000';"  
+            />
+      </a>
+  
+      <a xlink:href="#"class = "room">
+      <rect id="Urbauer"
+         style="fill:#FFFF00;fill-opacity:.95;fill-rule:evenodd;stroke:#000000;stroke-width:0.93570399px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:.9"
+         id="rect3658"
+         width="134.03787"
+         height="79.3228"
+         x="1317.7104"
+         y="209.42538"
+          onmouseover="this.style.fill= '#cfcf00';"
+         onmouseout="this.style.fill= '#FFFF00';"  />
+      </a>
+  
+      <text
+         xml:space="preserve"
+         style="font-size:25px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="206.34911"
+         y="748.88507"
+         id="text4430"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan4432"
+           x="206.34911"
+           y="748.88507">Simon Hall</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:25.58702087px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="424.32602"
+         y="839.24261"
+         id="text4434"
+         sodipodi:linespacing="125%"
+         transform="scale(1.0270682,0.97364517)"><tspan
+           sodipodi:role="line"
+           id="tspan4436"
+           x="424.32602"
+           y="839.24261">DUC</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:25px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="1198.5677"
+         y="786.76813"
+         id="text4438"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan4440"
+           x="1198.5677"
+           y="786.76813">Wilson</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:25px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="1334.4836"
+         y="255.91122"
+         id="text4442"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan4444"
+           x="1334.4836"
+           y="255.91122">Urbauer</tspan></text>
+    </g>
+  </svg>
+  </figure>
+    <div id="main"></div>
+  <script type="text/javascript">
+      $(document).ready(function() {
+      $("#showMap").hide();
+      $(".select_data_list").hide();
+      $(".urbauer_room_list").hide();
+      $(".input").hide();
+       $("#NetworksInfo").hide();
+      
+      });
+      Parse.initialize("Wgyx5HivoZXhRuAjRsSpgd4Zr7uME2hsV5YWg1lW", "5lJ93Ne9K8RuaHXuHUqvH9iGwzrnb3muhdW1ROF2");
+      
+      $("#showMap").click(function(event){
+          $("#campusMap").show("slow");
+          $('#googleMap').hide();
+          d3.select(".plot").remove();
+          $(".select_data_list").hide();
+          $(".urbauer_room_list").hide();
+          $("#showMap").hide();
+          $(".input").hide();
+          $("#NetworksInfo").hide();
+  
+  
+    });
+      
+      //Function where clicking on colored building from map shows more detailed information for that building
+      var globalRoom; 
+      $(".room").click(function(event){
+        $(".input").show();
+          $("#showMap").show();
+          $("#NetworksInfo").show("slow");
+          var roomID = event.target.id;
+          $(".select_data_list").show("slow");
+  
+        var room;
+        if (roomID == "Wilson") {
+        room = "Wilson 214";
+      }
+      if (roomID == "SimonHall") {
+        room = "Simon Hall";
+      }
+      if (roomID == "DUC") {
+        room = "Orchid Room";
+      }
+      if (roomID == "Urbauer") { //placeholder to keep the same style
+        room = "Urbauer";
+      }
+      
+      globalRoom = room;
+      //Urbauer code has additional information
+      if (globalRoom == "Urbauer") {
+          $(".urbauer_room_list").show();
+           $("#campusMap").hide("slow");
+        var queryFor =  $("#select_data_list").val();
+        var queryForRoom = $("#urbauer_room_list").val();
+        var data = Parse.Object.extend("CreativeProjectWifiData");
+        var query = new Parse.Query(data);
+        query.equalTo("location", queryForRoom);
+        query.find({
+        success: function(results) {
+         var jsonData = [];
+        for (var i = 0; i < results.length; i++) { 
+           var object = results[i];
+            jsonData[i] = object;
+          }
+          graphResults(jsonData,queryFor);
+          makeiFrame(results);
+          
+        },
+           error: function(error) {
+           alert("Error: " + error.code + " " + error.message);
+          }
+        });
+          
+          
+          
+          
+          
+      }else{
+        
+       $("#campusMap").hide("slow");
+       var queryFor =  $("#select_data_list").val();
+        var data = Parse.Object.extend("CreativeProjectWifiData");
+        var query = new Parse.Query(data);
+        query.equalTo("location",globalRoom);
+        query.find({
+        success: function(results) {
+         var jsonData = [];
+        for (var i = 0; i < results.length; i++) { 
+           var object = results[i];
+            jsonData[i] = object;
+          }
+
+          graphResults(jsonData,queryFor);
+          makeiFrame(results);
+          
+        },
+           error: function(error) {
+           alert("Error: " + error.code + " " + error.message);
+          }
+        });
+       
+      }
+      
+       
+      
+      }
+      );
+      
+      $("#get_data").click(function(event){
+        $(".input").show();
+         if($(".urbauer_room_list").is(':visible')){
+          globalRoom = $("#urbauer_room_list").val();
+         }      
+        var queryFor =  $("#select_data_list").val();
+        
+        var data = Parse.Object.extend("CreativeProjectWifiData");
+        var query = new Parse.Query(data);
+        query.equalTo("location",globalRoom);
+        query.find({
+        success: function(results) {
+         var jsonData = [];
+        for (var i = 0; i < results.length; i++) { 
+           var object = results[i];
+            jsonData[i] = object;
+          }
+          graphResults(jsonData,queryFor);
+        },
+           error: function(error) {
+           alert("Error: " + error.code + " " + error.message);
+          }
+        });
+      
+         
+      });
+      
+    //Create google satellite map with pin on coordinates specified by parse table data 
+    function makeiFrame(results) {
+        var latitude = results[1].get("latitude");
+        var longitude = results[1].get("longitude");
+        var googleMap = document.getElementById("googleMap").innerHTML="<iframe id ='googleMap' width='600' height='450'  style='position:relative;top:-850; left: 50px' src='https://www.google.com/maps/embed/v1/place?key=AIzaSyAygiYdYyjr-nRx4gPZlI3tBiHjYvA8lJk&maptype=satellite&zoom=18&q="+latitude+","+longitude+"'></iframe>";
+        $('#googleMap').show();
+    }
+    
+      //Bargraph d3 function
+      function graphResults(jsonData,type) {
+         d3.select(".plot").remove();
+          var margin = {top: 20, right: 30, bottom: 20, left: 20}, width = 600 - margin.left - margin.right, height = 500 - margin.top - margin.bottom;
+          var x = d3.scale.ordinal().rangeRoundBands([0,width],.1);
+          var y = d3.scale.linear().range([height, 0]);
+          var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(10);
+          var yAxis = d3.svg.axis().scale(y).orient("left").ticks(10);        
+          
+          var svg = d3.select("body").append("svg").attr("class","plot").
+          attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).attr("style","position:relative; top:-850; left: 50px;").append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+          x.domain(jsonData.map(function(d){ return d.get("SSID")}));
+          y.domain([0, d3.max(jsonData, function(d) { return d.get(type); })]);
+        
+        svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis).selectAll("text").style("text-anchor", "end").attr("dx", "-.8em").attr("dy", ".15em");
+              
+        var tip = d3.tip().attr('class', 'd3-tip').offset([-10, 0]).html(function(d) {return "<strong>"+type+":</strong> <span style='color:red'>" + d.get(type) + "</span>";})
+        svg.call(tip);
+        svg.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text(type);
+        svg.selectAll(".bar").data(jsonData).enter().append("rect").attr("class","bar").attr("x",function(d){return x(d.get("SSID"));}).attr("width", x.rangeBand()).attr("y", function(d) { return y(d.get(type)); }).attr("height", function(d) { return height - y(d.get(type)); }).on('mouseover', tip.show).
+        on('mouseout', tip.hide).transition().delay(function(d, i) {return i * 10000 }).duration(1000);
+  
+        d3.select("input").on("change", change);
+           function change() {
+  
+      var x0 = x.domain(jsonData.sort(this.checked
+          ? function(a, b) { return b.get(type) - a.get(type); }
+          : function(a, b) { return d3.ascending(a.get(type), b.get(type)); }).map(function(d) { return d.get("SSID"); })).copy();
+  
+      var transition = svg.transition().duration(750),
+          delay = function(d, i) { return i * 50; };
+      transition.selectAll(".bar").delay(delay).attr("x", function(d) { return x0(d.get("SSID")); });
+      transition.select(".x.axis").call(xAxis).selectAll("g").delay(delay);
+    }
+          
+      }
+      
+  </script>
+   
+  </body>
+  </html>
